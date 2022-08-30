@@ -1,0 +1,33 @@
+# docker-compose -f ./docker-compose-fluentd.yml up --build -d --scale fluentd-client=5
+# docker-compose -f ./docker-compose-fluentd.yml down --remove-orphans
+
+version: '2'
+services:
+  fluentd-client:
+    container_name: fluentd-client
+    image: fluent/fluentd:v0.12-debian
+    ports:
+      - "9880:9880"
+    volumes:
+      - ./fluentd.conf:/fluentd/etc/fluent.conf
+    links:
+      - aggregator
+
+  aggregator:
+    container_name: aggregator
+    image: fluent/fluent-bit
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    volumes:
+      - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+
+  fluentbit-client:
+    container_name: fluentbit-client
+    image: fluent/fluent-bit
+    ports:
+      - "9883:9883"
+    volumes:
+      - ./fluent-bit-client.conf:/fluent-bit/etc/fluent-bit.conf
+    links:
+      - aggregator
