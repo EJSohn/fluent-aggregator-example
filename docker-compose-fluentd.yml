@@ -1,12 +1,14 @@
+# docker-compose -f ./docker-compose-fluentd.yml up --build -d --scale fluentd-client=1
+# docker-compose -f ./docker-compose-fluentd.yml down --remove-orphans
+
 version: '2'
 services:
   fluentd-client:
     container_name: fluentd-client
-    build: fluentd
-    ports:
-      - "9880:9880"
+    image: fluent/fluentd:v1.12.0-debian-1.0
     volumes:
       - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf
+      - ./fluentd/sb_api.log:/fluentd/etc/sb_api.log
     links:
       - aggregator
 
